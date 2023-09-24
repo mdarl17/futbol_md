@@ -215,8 +215,9 @@ def most_tackles(season)
   team_id_most_tackles = tackles_by_team.max_by {|team_id, tackles| tackles}.first
   #find team object by id found above
   team_with_most_tackles = @team_data.find do |team|
-    team_id_most_tackles == team.franchise_id
+    team_id_most_tackles == team.team_id
   end
+  # require 'pry'; binding.pry
   #call on team name attribute of team object
   team_with_most_tackles.team_name
 end  
@@ -240,12 +241,13 @@ def fewest_tackles(season)
       tackles_by_team[game_team.team_id] = game_team.tackles.to_i
     end
     #find team id with most tackles
-    team_id_fewest_tackles = tackles_by_team.min_by {|team_id, tackles| tackles}.first
+    team_id_fewest_tackles = tackles_by_team.min_by {|team_id, tackles| tackles}
+    # require 'pry'; binding.pry
     #find team object by id found above
     team_with_fewest_tackles = @team_data.find do |team|
-      team_id_fewest_tackles == team.franchise_id
+      team_id_fewest_tackles == team.team_id
     end
-     team_with_fewest_tackles.team_name
+    team_with_fewest_tackles.team_name
   end
 
 #     worst_win_percent_coach = coach_win_percent_hash.key(coach_win_percent_hash.values.min)
@@ -253,9 +255,9 @@ def fewest_tackles(season)
 
 
 
-=======
+
     #call on team name attribute of team object
- 
+
 
   def most_accurate_team(season)
     games_by_season = @game_data.find_all do |game|
@@ -269,12 +271,14 @@ def fewest_tackles(season)
     end
     most_accuracy_by_team = Hash.new(0)   
     game_teams_by_season.each do |game_team|
+      # require 'pry'; binding.pry
       most_accuracy_by_team[game_team.team_id] += ((game_team.goals.to_f) / (game_team.shots.to_f)).round(2)
     end 
     team_id_most_accurate = most_accuracy_by_team.max_by {|team_id, accuracy| accuracy}.first
     team_with_most_accuracy = @team_data.find do |team|
       team_id_most_accurate == team.team_id
     end
+    # require 'pry'; binding.pry
     team_with_most_accuracy.team_name
   end
 
@@ -325,7 +329,6 @@ def fewest_tackles(season)
         end
       end
     end
-    # require 'pry'; binding.pry
     if home_or_away == "away"
       hoa_hash[:away]
     else 
@@ -352,7 +355,6 @@ def fewest_tackles(season)
         average_goals[key] = (value.to_f / games_by_team(team_side)[key].to_f).round(3) 
       end
     end
-    # require 'pry'; binding.pry
     average_goals
   end
 
@@ -435,6 +437,5 @@ def fewest_tackles(season)
   def seasons_sorted
     season_sorted = Game.games.group_by {|game| game.season}
   end
-
 end
 
