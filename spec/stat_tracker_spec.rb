@@ -217,6 +217,12 @@ RSpec.describe StatTracker do
    expect(@stat_tracker.most_tackles("20122013")).to eq "FC Cincinnati"
    expect(@stat_tracker.fewest_tackles("20122013")).to eq "Atlanta United"
   end
+
+  describe "#highest_scoring_visitor" do
+    it 'finds team with highest average score when away' do
+      expect(@stat_tracker.highest_scoring_visitor).to eq "FC Dallas"
+    end
+  end
 end
 # Group Tests
 # ==========================================================================================================
