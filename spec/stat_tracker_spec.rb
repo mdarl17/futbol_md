@@ -223,6 +223,7 @@ RSpec.describe StatTracker do
       expect(@stat_tracker.highest_scoring_visitor).to eq "FC Dallas"
     end
   end
+
 end
 # Group Tests
 # ==========================================================================================================
