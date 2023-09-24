@@ -290,7 +290,7 @@ class StatTracker
     end
     team_with_most_accuracy.team_name
   end
-
+  
   def least_accurate_team(season)
     games_by_season = @game_data.find_all do |game|
       game if game.season == season
@@ -311,7 +311,6 @@ class StatTracker
     end
     team_with_least_accuracy.team_name
   end
-
 
 
   def most_tackles(season)
