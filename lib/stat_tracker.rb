@@ -97,6 +97,7 @@ class StatTracker
     (away_wins.to_f / Game.games.count.to_f).round(2)
   end
 
+
   def percentage_ties 
     ties = @game_data.count do |game|
       # require 'pry'; binding.pry
@@ -134,13 +135,6 @@ def average_goals_by_season
     av_goals[season] = (total_goals.sum.to_f / games.length).round(2)
   end
   av_goals
-end
-
-def percentage_visitor_wins
-  away_wins = GameTeam.gameteam.count do |game|
-    game.HoA == "away" && game.result == "WIN"
-  end 
-  (away_wins.to_f / Game.games.count.to_f).round(2)
 end
 
 def percentage_home_wins
