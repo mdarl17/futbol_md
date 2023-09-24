@@ -134,12 +134,12 @@ RSpec.describe StatTracker do
     expect(@stat_tracker.rival("18")).to eq("Houston Dash").or(eq("LA Galaxy"))
   end
 
-  xit "#winningest_coach" do
+  it "#winningest_coach" do
     expect(@stat_tracker.winningest_coach("20132014")).to eq "Claude Julien"
     expect(@stat_tracker.winningest_coach("20142015")).to eq "Alain Vigneault"
   end
 
-  xit "#worst_coach" do
+  it "#worst_coach" do
     expect(@stat_tracker.worst_coach("20132014")).to eq "Peter Laviolette"
     expect(@stat_tracker.worst_coach("20142015")).to eq("Craig MacTavish").or(eq("Ted Nolan"))
   end
@@ -163,7 +163,7 @@ RSpec.describe StatTracker do
     expect(@stat_tracker.fewest_tackles("20132014")).to eq "Atlanta United"
     expect(@stat_tracker.fewest_tackles("20142015")).to eq "Orlando City SC"
   end
-
+end
 # Group Tests
 # ==========================================================================================================
 
@@ -328,4 +328,4 @@ RSpec.describe StatTracker do
 #       end
 #     end
 #   end
-end
+# end

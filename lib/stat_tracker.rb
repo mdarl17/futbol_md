@@ -247,7 +247,7 @@ def fewest_tackles(season)
     team_with_fewest_tackles = @team_data.find do |team|
       team_id_fewest_tackles == team.team_id
     end
-     team_with_fewest_tackles.team_name
+    team_with_fewest_tackles.team_name
   end
 
 #     worst_win_percent_coach = coach_win_percent_hash.key(coach_win_percent_hash.values.min)
@@ -255,9 +255,9 @@ def fewest_tackles(season)
 
 
 
-=======
+
     #call on team name attribute of team object
- 
+
 
   def most_accurate_team(season)
     games_by_season = @game_data.find_all do |game|
@@ -329,7 +329,6 @@ def fewest_tackles(season)
         end
       end
     end
-    # require 'pry'; binding.pry
     if home_or_away == "away"
       hoa_hash[:away]
     else 
@@ -356,7 +355,6 @@ def fewest_tackles(season)
         average_goals[key] = (value.to_f / games_by_team(team_side)[key].to_f).round(3) 
       end
     end
-    # require 'pry'; binding.pry
     average_goals
   end
 
@@ -439,6 +437,5 @@ def fewest_tackles(season)
   def seasons_sorted
     season_sorted = Game.games.group_by {|game| game.season}
   end
-
 end
 
