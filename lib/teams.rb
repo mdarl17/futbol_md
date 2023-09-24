@@ -12,7 +12,7 @@ class Team
     @franchise_id = attributes[:franchiseid]
     @team_name    = attributes[:teamname]
     @abbreviation = attributes[:abbreviation]
-    @Stadium = attributes[:Stadium]
+    @stadium = attributes[:stadium]
     @link = attributes[:link]
     @@teams << self
   end
