@@ -1,7 +1,7 @@
 # require_relative './spec_helper'
-  require_relative './game'
-  require_relative './game_team'
-  require_relative './teams'
+require_relative './game'
+require_relative './game_team'
+require_relative './teams'
 #  require 'pry-nav'
 
 
@@ -97,6 +97,7 @@ class StatTracker
     (away_wins.to_f / Game.games.count.to_f).round(2)
   end
 
+
   def percentage_ties 
     ties = @game_data.count do |game|
       # require 'pry'; binding.pry
@@ -136,13 +137,6 @@ def average_goals_by_season
   av_goals
 end
 
-def percentage_visitor_wins
-  away_wins = GameTeam.gameteam.count do |game|
-    game.HoA == "away" && game.result == "WIN"
-  end 
-  (away_wins.to_f / Game.games.count.to_f).round(2)
-end
-
 def percentage_home_wins
   home_wins = GameTeam.gameteam.count do |game|
     game.hoa == "home" && game.result == "WIN"
@@ -162,43 +156,43 @@ end
 
 def best_offense
   total_team_goals_hash = {}
-   team_goals("home").each do |team_id, home_goals|
-     total_team_goals_hash[team_id] = [
-       home_goals + team_goals("away")[team_id],
-       @game_teams_data.find_all do |game|
-         game.team_id == team_id
-       end.count
-   ]
-   end 
-   team_name_avg_goals = []
-   total_team_goals_hash.each do |team, gls_gms_arr|
-     team_name_avg_goals << [get_team_info(team)['team_name'], ((gls_gms_arr.first.to_f/gls_gms_arr.last.to_f)*100/100).round(3)]
-   end
-   team_name_avg_goals.max_by do |team_arr|
-     team_arr.last
-   end.first
- end
+  team_goals("home").each do |team_id, home_goals|
+    total_team_goals_hash[team_id] = [
+      home_goals + team_goals("away")[team_id],
+      @game_teams_data.find_all do |game|
+        game.team_id == team_id
+      end.count
+  ]
+  end 
+  team_name_avg_goals = []
+  total_team_goals_hash.each do |team, gls_gms_arr|
+    team_name_avg_goals << [get_team_info(team)['team_name'], ((gls_gms_arr.first.to_f/gls_gms_arr.last.to_f)*100/100).round(3)]
+  end
+  team_name_avg_goals.max_by do |team_arr|
+    team_arr.last
+  end.first
+end
 
- def worst_offense
-   total_team_goals_hash = {}
-   team_goals("home").each do |team_id, home_goals|
-     total_team_goals_hash[team_id] = [
-       home_goals + team_goals("away")[team_id],
-       @game_teams_data.find_all do |game|
-         game.team_id == team_id
-       end.count
-   ]
-   end 
-   team_name_avg_goals = []
-   total_team_goals_hash.each do |team, gls_gms_arr|
-     team_name_avg_goals << [get_team_info(team)['team_name'], ((gls_gms_arr.first.to_f/gls_gms_arr.last.to_f)*100/100).round(3)]
-   end
-   team_name_avg_goals.min_by do |team_arr|
-     team_arr.last
-   end.first
- end
+def worst_offense
+  total_team_goals_hash = {}
+  team_goals("home").each do |team_id, home_goals|
+    total_team_goals_hash[team_id] = [
+      home_goals + team_goals("away")[team_id],
+      @game_teams_data.find_all do |game|
+        game.team_id == team_id
+      end.count
+  ]
+  end 
+  team_name_avg_goals = []
+  total_team_goals_hash.each do |team, gls_gms_arr|
+    team_name_avg_goals << [get_team_info(team)['team_name'], ((gls_gms_arr.first.to_f/gls_gms_arr.last.to_f)*100/100).round(3)]
+  end
+  team_name_avg_goals.min_by do |team_arr|
+    team_arr.last
+  end.first
+end
 
- 
+
   
 def most_tackles(season)
   #returns array of all games for specific season
@@ -304,47 +298,33 @@ def fewest_tackles(season)
       total_goals += row.goals.to_i
       total_games << row.game_id
     end
+    # require 'pry'; binding.pry
     average = total_goals.to_f / total_games.uniq.count
     average.round(2)
   end
 
-  # def highest_scoring_visitor
-  #   team_information = {}
-  #   season_goals = 0
-  #   @game_teams_data.find_all do |row|
-  #     season_goals += row[:goals].to_i
-  #     team_information[row[:team_id]] = season_goals + 
-  #     # require 'pry'; binding.pry
-  #   # require 'pry'; binding.pry
-  #   # row[:goals]
-  #   # row[:team_id]
-  #   # row[:game_id]
-  #   # row[:hoa]
+
 
   def team_goals(home_or_away)
     teams = @game_teams_data.group_by { |row| row.team_id}
-    team_home_goals = Hash.new
-    team_away_goals = Hash.new
+    hoa_hash = { home: Hash.new(0), away: Hash.new(0)}
     teams.each do |team, data_array|
-      away_goals = 0
-      home_goals = 0
       data_array.each do |data|
-        if data.hoa == "home"
-          home_goals += data.goals.to_i
+        if data.hoa == "home" 
+          hoa_hash[:home][team] += data.goals.to_i
         elsif data.hoa == "away"
-          away_goals += data.goals.to_i
+          hoa_hash[:away][team] += data.goals.to_i
         end
       end
-      team_away_goals[team] = away_goals
-      team_home_goals[team] = home_goals
     end
+    # require 'pry'; binding.pry
     if home_or_away == "away"
-      team_away_goals
+      hoa_hash[:away]
     else 
-      team_home_goals
+      hoa_hash[:home]
     end
   end
-  
+
   def games_by_team(team_side)
     teams = @game_teams_data.group_by { |row| row.team_id }
     games = Hash.new
@@ -364,13 +344,14 @@ def fewest_tackles(season)
         average_goals[key] = (value.to_f / games_by_team(team_side)[key].to_f).round(3) 
       end
     end
+    # require 'pry'; binding.pry
     average_goals
   end
 
   def highest_scoring_visitor
-    team = average_goals_per_team("away")
+    avg_goals_away_team = average_goals_per_team("away")
     highest_a_avg = average_goals_per_team("away").values.max
-    team_identifier = team.key(highest_a_avg)
+    team_identifier = avg_goals_away_team.key(highest_a_avg)
     team_highest_a_avg = @team_data.find do |team|
       team_identifier == team.team_id
     end
@@ -378,9 +359,9 @@ def fewest_tackles(season)
   end
 
   def lowest_scoring_visitor
-    team = average_goals_per_team("away")
+    avg_away_team = average_goals_per_team("away")
     lowest_a_avg = average_goals_per_team("away").values.min
-    team_identifier = team.key(lowest_a_avg)
+    team_identifier = avg_away_team.key(lowest_a_avg)
     team_lowest_a_avg = @team_data.find do |team|
       team_identifier == team.team_id
     end
@@ -388,9 +369,9 @@ def fewest_tackles(season)
   end
 
   def highest_scoring_home_team
-    team = average_goals_per_team("home")
+    avg_goals_home_team = average_goals_per_team("home")
     highest_h_avg = average_goals_per_team("home").values.max
-    team_identifier = team.key(highest_h_avg)
+    team_identifier = avg_goals_home_team.key(highest_h_avg)
     team_highest_h_avg = @team_data.find do |team|
       team_identifier == team.team_id
     end
@@ -398,9 +379,9 @@ def fewest_tackles(season)
   end
 
   def lowest_scoring_home_team
-    team = average_goals_per_team("home")
+    avg_goals_home = average_goals_per_team("home")
     lowest_h_avg = average_goals_per_team("home").values.min
-    team_identifier = team.key(lowest_h_avg)
+    team_identifier = avg_goals_home.key(lowest_h_avg)
     team_lowest_h_avg = @team_data.find do |team|
       team_identifier == team.team_id
     end
@@ -409,9 +390,9 @@ def fewest_tackles(season)
 
   def count_of_teams
     teams = @team_data.group_by { |team| team.team_name}
-    teams.count
+    teams.keys.compact.count
   end
-end
+
 
   def seasons_sorted
     season_sorted = Game.games.group_by {|game| game.season}
