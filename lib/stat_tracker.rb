@@ -245,9 +245,17 @@ def fewest_tackles(season)
     team_with_fewest_tackles = @team_data.find do |team|
       team_id_fewest_tackles == team.franchise_id
     end
-    #call on team name attribute of team object
-    team_with_fewest_tackles.team_name
+     team_with_fewest_tackles.team_name
   end
+
+#     worst_win_percent_coach = coach_win_percent_hash.key(coach_win_percent_hash.values.min)
+#   end
+
+
+
+=======
+    #call on team name attribute of team object
+ 
 
   def most_accurate_team(season)
     games_by_season = @game_data.find_all do |game|
