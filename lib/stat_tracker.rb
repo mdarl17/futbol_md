@@ -192,63 +192,6 @@ def worst_offense
   end.first
 end
 
-
-  
-def most_tackles(season)
-  #returns array of all games for specific season
-  games_by_season = @game_data.find_all do |game|
-    game if game.season == season
-  end
-  #returns array of all game_teams for specific season, game_teams track tackles
-  game_teams_by_season = []
-  games_by_season.each do |game|
-    @game_teams_data.each do |game_team|
-      game_teams_by_season.push(game_team) if game.game_id == game_team.game_id
-    end
-  end
-  #creats empty acumulator hash, sort teams by id as key, add all tackles for each team as value
-  tackles_by_team = Hash.new(0)
-  game_teams_by_season.each do |game_team|
-    tackles_by_team[game_team.team_id] += game_team.tackles.to_i
-  end
-  #find team id with most tackles 
-  team_id_most_tackles = tackles_by_team.max_by {|team_id, tackles| tackles}.first
-  #find team object by id found above
-  team_with_most_tackles = @team_data.find do |team|
-    team_id_most_tackles == team.team_id
-  end
-  #call on team name attribute of team object
-  team_with_most_tackles.team_name
-end  
-  
-
-def fewest_tackles(season)
-  #returns array of all games for specific season
-  games_by_season = @game_data.find_all do |game|
-    game if game.season == season
-  end
-    #returns array of all game_teams for specific season, game_teams track tackles
-  game_teams_by_season = []
-  games_by_season.each do |game|
-    @game_teams_data.each do |game_team|
-      game_teams_by_season.push(game_team) if game.game_id == game_team.game_id
-    end
-  end
-    #creats empty acumulator hash, sort teams by id as key, add all tackles for each team as value
-    tackles_by_team = Hash.new(0)
-    game_teams_by_season.each do |game_team|
-      tackles_by_team[game_team.team_id] += game_team.tackles.to_i
-    end
-    #find team id with fewest tackles
-    team_id_fewest_tackles = tackles_by_team.min_by {|team_id, tackles| tackles}.first
-    #find team object by id found above
-    team_with_fewest_tackles = @team_data.find do |team| 
-      team_id_fewest_tackles == team.team_id
-    end
-    # require 'pry'; binding.pry
-    team_with_fewest_tackles.team_name
-  end
-
   def winningest_coach(season)
     coach_wins = {}
     season_game_ids = @game_data.reduce([]) do |game_ids, game|
