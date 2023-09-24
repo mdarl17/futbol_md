@@ -17,7 +17,6 @@ class StatTracker
   # CREATOR METHODS
 
   def create_games(path)
-      Game.reset
     data = CSV.parse(File.read(path), headers: true, header_converters: :symbol)
     data.map do |row|
       Game.new(row)
@@ -25,7 +24,6 @@ class StatTracker
   end
 
   def create_game_teams(path)
-    GameTeam.reset
     data = CSV.parse(File.read(path), headers: true, header_converters: :symbol)
     data.map do |row| 
       GameTeam.new(row)
