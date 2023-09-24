@@ -134,7 +134,7 @@ RSpec.describe StatTracker do
     expect(@stat_tracker.rival("18")).to eq("Houston Dash").or(eq("LA Galaxy"))
   end
 
-  xit "#winningest_coach" do
+  it "#winningest_coach" do
     expect(@stat_tracker.winningest_coach("20132014")).to eq "Claude Julien"
     expect(@stat_tracker.winningest_coach("20142015")).to eq "Alain Vigneault"
   end
