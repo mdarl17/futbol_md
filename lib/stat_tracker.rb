@@ -217,7 +217,6 @@ def most_tackles(season)
   team_with_most_tackles = @team_data.find do |team|
     team_id_most_tackles == team.team_id
   end
-  # require 'pry'; binding.pry
   #call on team name attribute of team object
   team_with_most_tackles.team_name
 end  
@@ -238,15 +237,15 @@ def fewest_tackles(season)
     #creats empty acumulator hash, sort teams by id as key, add all tackles for each team as value
     tackles_by_team = Hash.new(0)
     game_teams_by_season.each do |game_team|
-      tackles_by_team[game_team.team_id] = game_team.tackles.to_i
+      tackles_by_team[game_team.team_id] += game_team.tackles.to_i
     end
-    #find team id with most tackles
-    team_id_fewest_tackles = tackles_by_team.min_by {|team_id, tackles| tackles}
-    # require 'pry'; binding.pry
+    #find team id with fewest tackles
+    team_id_fewest_tackles = tackles_by_team.min_by {|team_id, tackles| tackles}.first
     #find team object by id found above
-    team_with_fewest_tackles = @team_data.find do |team|
+    team_with_fewest_tackles = @team_data.find do |team| 
       team_id_fewest_tackles == team.team_id
     end
+    # require 'pry'; binding.pry
     team_with_fewest_tackles.team_name
   end
 
@@ -314,9 +313,9 @@ def fewest_tackles(season)
     end
     most_accuracy_by_team = Hash.new(0)   
     game_teams_by_season.each do |game_team|
-      # require 'pry'; binding.pry
-      most_accuracy_by_team[game_team.team_id] += ((game_team.goals.to_f) / (game_team.shots.to_f)).round(2)
+      most_accuracy_by_team[game_team.team_id] += ((game_team.goals.to_f) / (game_team.shots.to_f)).round(3) 
     end 
+    # require 'pry'; binding.pry
     team_id_most_accurate = most_accuracy_by_team.max_by {|team_id, accuracy| accuracy}.first
     team_with_most_accuracy = @team_data.find do |team|
       team_id_most_accurate == team.team_id
