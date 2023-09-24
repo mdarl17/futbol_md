@@ -263,7 +263,7 @@ def fewest_tackles(season)
         if !hash[game.head_coach]
           hash[game.head_coach] = { wins: 0, losses: 0 }
         end
-          result == “WIN” ? hash[game.head_coach][:wins] += 1 : hash[game.head_coach][:losses] += 1
+          result == "WIN" ? hash[game.head_coach][:wins] += 1 : hash[game.head_coach][:losses] += 1
       end
       hash
     end
@@ -289,7 +289,7 @@ def fewest_tackles(season)
         if !hash[game.head_coach]
           hash[game.head_coach] = { wins: 0, losses: 0 }
         end
-          result == “WIN” ? hash[game.head_coach][:wins] += 1 : hash[game.head_coach][:losses] += 1
+          result == "WIN" ? hash[game.head_coach][:wins] += 1 : hash[game.head_coach][:losses] += 1
       end
       hash
     end
