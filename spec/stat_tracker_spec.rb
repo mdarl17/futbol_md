@@ -163,6 +163,13 @@ RSpec.describe StatTracker do
     expect(@stat_tracker.fewest_tackles("20132014")).to eq "Atlanta United"
     expect(@stat_tracker.fewest_tackles("20142015")).to eq "Orlando City SC"
   end
+
+  describe "#find_game_with_season_id" do
+    it "returns array with games of a season" do
+      expect(@stat_tracker.find_game_with_season_id("20142015")).to be_instance_of(Array)
+    end
+  end
+
 end
 # Group Tests
 # ==========================================================================================================

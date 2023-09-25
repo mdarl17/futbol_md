@@ -21,6 +21,7 @@ class StatTracker
     data.map do |row|
       Game.new(row)
     end
+    # require 'pry'; binding.pry
   end
 
   def create_game_teams(path)
@@ -183,55 +184,58 @@ class StatTracker
   end
 
   def winningest_coach(season)
-    coach_wins = {}
-    season_game_ids = Game.games.reduce([]) do |game_ids, game|
+    season_game_id = find_game_with_season_id(season)
+    # require 'pry'; binding.pry
+    highest_percent = coach_win_loss(season_game_id).values.max
+    best = coach_win_loss(season_game_id).key(highest_percent) 
+  end
+
+  def find_game_with_season_id(season)
+    game_ids = {}
+    Game.games.each do |game|
       if game.season == season
-        game_ids << game.game_id
+        game_ids[game.game_id] = true
       end
-      game_ids
     end
-    coach_win_loss_hash = GameTeam.gameteam.reduce({}) do |hash, game|
-      if season_game_ids.include? (game.game_id)
+    game_ids.keys
+  end
+
+  def coach_win_loss(season_game_id)
+    coach_win_hash = Hash.new(0)
+    coach_loss_hash = Hash.new(0)
+    coach_tie_hash = Hash.new(0)
+    @game_teams_data.each do |game|
+      games_by_season = season_game_id
+      if games_by_season.include?(game.game_id)
         result = game.result
-        if !hash[game.head_coach]
-          hash[game.head_coach] = { wins: 0, losses: 0 }
+        if game.result == "WIN" 
+          coach_win_hash[game.head_coach] += 1
+        elsif game.result == "LOSS"
+          coach_loss_hash[game.head_coach] += 1
+        elsif game.result == "TIE"
+          coach_tie_hash[game.head_coach] += 1
         end
-          result == "WIN" ? hash[game.head_coach][:wins] += 1 : hash[game.head_coach][:losses] += 1
       end
-      hash
     end
-    coach_win_percent_hash = {}
-    coach_win_loss_hash.each do |coach, wins_losses|
-      win_percent = wins_losses[:wins].to_f/((wins_losses[:wins] + wins_losses[:losses])*100/100).round(3)
-      coach_win_percent_hash[coach] = win_percent
+    win_percentage(coach_win_hash, coach_loss_hash, coach_tie_hash)
+  end
+          
+  def total_games(wins, losses, ties)
+    total_games = wins.merge(losses) do |key, wins, losses|
+      wins + losses + ties[key].to_i
     end
-    best_win_percent_coach = coach_win_percent_hash.key(coach_win_percent_hash.values.max)
+  end
+  
+  def win_percentage(wins, losses, ties)
+    percentage = wins.merge(total_games(wins, losses, ties)) do |key, wins, total|
+      (wins.to_f / total.to_f) * 100
+    end
   end
 
   def worst_coach(season)
-    coach_wins = {}
-    season_game_ids = Game.games.reduce([]) do |game_ids, game|
-      if game.season == season
-        game_ids << game.game_id
-      end
-      game_ids
-    end
-    coach_win_loss_hash = @game_teams_data.reduce({}) do |hash, game|
-      if season_game_ids.include? (game.game_id)
-        result = game.result
-        if !hash[game.head_coach]
-          hash[game.head_coach] = { wins: 0, losses: 0 }
-        end
-          result == "WIN" ? hash[game.head_coach][:wins] += 1 : hash[game.head_coach][:losses] += 1
-      end
-      hash
-    end
-    coach_win_percent_hash = {}
-    coach_win_loss_hash.each do |coach, wins_losses|
-      win_percent = wins_losses[:wins].to_f/((wins_losses[:wins] + wins_losses[:losses])*100/100).round(3)
-      coach_win_percent_hash[coach] = win_percent
-    end
-    worst_win_percent_coach = coach_win_percent_hash.key(coach_win_percent_hash.values.min)
+    season_game_id = find_game_with_season_id(season)
+    lowest_percent = coach_win_loss(season_game_id).values.min
+    worst = coach_win_loss(season_game_id).key(lowest_percent) 
   end
 
   def most_accurate_team(season)
@@ -371,6 +375,7 @@ class StatTracker
       game_location = data_array.select { |data| data.hoa == team_side}
       games[team] = game_location.count
     end
+    # require 'pry'; binding.pry
     games
   end
 
@@ -431,18 +436,18 @@ class StatTracker
     teams.keys.compact.count
   end
 
-  def seasons_sorted
-    season_sorted = Game.games.group_by {|game| game.season}
-    game_ids = []
-    season_game_ids = Hash.new
-    season_sorted.each do |season|
-      season.last.each do |data|
-        game_ids << data.game_id
-      end
-      season_game_ids[season.first] = game_ids
-    end
-    season_game_ids
-  end
+  # def seasons_sorted
+  #   season_sorted = Game.games.group_by {|game| game.season}
+  #   game_ids = []
+  #   season_game_ids = Hash.new
+  #   season_sorted.each do |season|
+  #     season.last.each do |data|
+  #       game_ids << data.game_id
+  #     end
+  #     season_game_ids[season.first] = game_ids
+  #   end
+  #   season_game_ids
+  # end
 
   def percentage_calculator(portion, whole)
     percentage = (portion/whole).round(2)
@@ -461,8 +466,8 @@ class StatTracker
     }
   end
 
-  def seasons_sorted
-    season_sorted = Game.games.group_by {|game| game.season}
-  end
+  # def seasons_sorted
+  #   season_sorted = Game.games.group_by {|game| game.season}
+  # end
 end
 
