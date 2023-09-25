@@ -177,50 +177,26 @@ RSpec.describe StatTracker do
     it 'will find the amount of home games per team' do
       expect(@stat_tracker.games_by_team("home")).to be_instance_of(Hash)
       #this test is for the fixture
-      expect(@stat_tracker.games_by_team("home")).to eq({"3"=>265,
-      "6"=>257,
-      "5"=>278,
-      "17"=>242,
-      "16"=>268,
-      "9"=>245,
-      "8"=>249,
-      "30"=>250,
-      "26"=>255,
-      "19"=>253,
-      "24"=>264,
-      "2"=>240,
-      "15"=>264,
-      "20"=>236,
-      "14"=>263,
-      "28"=>258,
-      "4"=>238,
-      "21"=>236,
-      "25"=>239,
-      "13"=>232,
-      "18"=>256,
-      "10"=>238,
-      "29"=>237,
-      "52"=>240,
-      "54"=>51,
-      "1"=>231,
-      "23"=>234,
-      "12"=>229,
-      "27"=>65,
-      "7"=>229,
-      "22"=>235,
-      "53"=>164})
+      expect(@stat_tracker.games_by_team("home")).to eq({"3"=>265, "6"=>257, "5"=>278, "17"=>242, "16"=>268, "9"=>245, "8"=>249, "30"=>250, "26"=>255, "19"=>253, "24"=>264, "2"=>240, "15"=>264, "20"=>236, "14"=>263, "28"=>258, "4"=>238, "21"=>236, "25"=>239, "13"=>232, "18"=>256, "10"=>238, "29"=>237, "52"=>240, "54"=>51, "1"=>231, "23"=>234, "12"=>229, "27"=>65, "7"=>229, "22"=>235, "53"=>164})
     end
   end
 
   it 'helper methods #team_info' do
-   expect(@stat_tracker.team_info).to be_a(Hash)
-   expect(@stat_tracker.most_tackles("20122013")).to eq "FC Cincinnati"
-   expect(@stat_tracker.fewest_tackles("20122013")).to eq "Atlanta United"
+  expect(@stat_tracker.team_info).to be_a(Hash)
+  expect(@stat_tracker.most_tackles("20122013")).to eq "FC Cincinnati"
+  expect(@stat_tracker.fewest_tackles("20122013")).to eq "Atlanta United"
   end
 
   describe "#highest_scoring_visitor" do
     it 'finds team with highest average score when away' do
       expect(@stat_tracker.highest_scoring_visitor).to eq "FC Dallas"
+    end
+  end
+
+
+  describe "#find_game_with_season_id" do
+    it "returns array with games of a season" do
+      expect(@stat_tracker.find_game_with_season_id("20142015")).to be_instance_of(Array)
     end
   end
 
