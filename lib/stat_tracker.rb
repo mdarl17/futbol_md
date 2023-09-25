@@ -137,12 +137,9 @@ class StatTracker
     (home_wins.to_f / Game.games.count.to_f).round(2)
   end
 
-  def seasons_sorted
-    season_sorted = Game.games.group_by {|game| game.season}
-  end
-  
   def team_info
     teams = GameTeam.gameteam.group_by {|team| team.team_id}
+    # require 'pry'; binding.pry
   end
 
   def best_offense
@@ -376,6 +373,7 @@ class StatTracker
       games[team] = game_location.count
     end
     # require 'pry'; binding.pry
+    # require 'pry'; binding.pry
     games
   end
 
@@ -436,19 +434,6 @@ class StatTracker
     teams.keys.compact.count
   end
 
-  # def seasons_sorted
-  #   season_sorted = Game.games.group_by {|game| game.season}
-  #   game_ids = []
-  #   season_game_ids = Hash.new
-  #   season_sorted.each do |season|
-  #     season.last.each do |data|
-  #       game_ids << data.game_id
-  #     end
-  #     season_game_ids[season.first] = game_ids
-  #   end
-  #   season_game_ids
-  # end
-
   def percentage_calculator(portion, whole)
     percentage = (portion/whole).round(2)
   end
@@ -465,9 +450,5 @@ class StatTracker
       "link" => team.link
     }
   end
-
-  # def seasons_sorted
-  #   season_sorted = Game.games.group_by {|game| game.season}
-  # end
 end
 
