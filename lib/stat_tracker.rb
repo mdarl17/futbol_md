@@ -19,7 +19,6 @@ class StatTracker
     data.map do |row|
       Game.new(row)
     end
-    # require 'pry'; binding.pry
   end
 
   def create_game_teams(path)
@@ -269,6 +268,7 @@ class StatTracker
       end
     end
     game_ids.keys
+    # require 'pry'; binding.pry
   end
 
   def coach_win_loss(season_game_id)
