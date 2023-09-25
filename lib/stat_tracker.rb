@@ -101,7 +101,7 @@ class StatTracker
   def average_goals_per_game
     total_goals = 0
     total_games = []
-    Gameteam.gameteam.each do |row|
+    GameTeam.gameteam.each do |row|
       total_goals += row.goals.to_i
       total_games << row.game_id
     end
@@ -268,7 +268,6 @@ class StatTracker
       end
     end
     game_ids.keys
-    # require 'pry'; binding.pry
   end
 
   def coach_win_loss(season_game_id)
@@ -334,18 +333,7 @@ class StatTracker
     end
     tackles_by_team
   end
-  
-  def average_goals_per_game
-    total_goals = 0
-    total_games = []
-    GameTeam.gameteam.each do |row|
-      total_goals += row.goals.to_i
-      total_games << row.game_id
-    end
-    average = total_goals.to_f / total_games.uniq.count
-    average.round(2)
-  end
-  
+
   def team_goals(home_or_away)
     teams = GameTeam.gameteam.group_by { |row| row.team_id}
     hoa_hash = { home: Hash.new(0), away: Hash.new(0)}
@@ -385,10 +373,6 @@ class StatTracker
       end
     end
     average_goals
-  end
-
-  def percentage_calculator(portion, whole)
-    percentage = (portion/whole).round(2)
   end
 
   def get_team_info(team_id)
