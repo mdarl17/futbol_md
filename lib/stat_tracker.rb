@@ -224,45 +224,33 @@ class StatTracker
   end
 
   def most_accurate_team(season)
-    games_by_season = Game.games.find_all do |game|
-      game if game.season == season
-    end
-    # require 'pry'; binding.pry
-    game_teams_by_season = []
-    games_by_season.each do |game|
-      GameTeam.gameteam.each do |game_team|
-        game_teams_by_season.push(game_team) if game.game_id == game_team.game_id
-      end
-    end
-    # require 'pry'; binding.pry
-    goals = game_teams_by_season.each_with_object(Hash.new(0)) { |game_team, hash| hash[game_team.team_id] += game_team.goals.to_i }
-    shots = game_teams_by_season.each_with_object(Hash.new(0)) { |game_team, hash| hash[game_team.team_id] += game_team.shots.to_i }   
-    accuracies = goals.merge(shots) { |team_id, goals_values, shots_values| goals_values.to_f / shots_values.to_f}
-    # require 'pry'; binding.pry
-    team_id_most_accurate = accuracies.key(accuracies.values.max)   
-
-    team_with_most_accuracy = Team.teams.find do |team|
+    goals = goals_per_season_team(season)
+    shots = shots_per_season_team(season)
+    accuracy = accuracy_by_team(goals, shots)
+    team_id_most_accurate = accuracy.key(accuracy.values.max) 
+    team_with_most_accuracy = @team_data.find do |team|
       team_id_most_accurate == team.team_id
     end
     team_with_most_accuracy.team_name
   end
+
+  def goals_per_season_team(season)
+    goals_per_season = game_teams_by_season(season).each_with_object(Hash.new(0)) { |game_team, hash| hash[game_team.team_id] += game_team.goals.to_i }
+  end
+
+  def shots_per_season_team(season)
+    shots_per_season = game_teams_by_season(season).each_with_object(Hash.new(0)) { |game_team, hash| hash[game_team.team_id] += game_team.shots.to_i } 
+  end
+
+  def accuracy_by_team(goals, shots)
+    accuracy = goals.merge(shots) { |team_id, goals_values, shots_values| goals_values.to_f / shots_values.to_f}
+  end
   
   def least_accurate_team(season)
-    games_by_season = Game.games.find_all do |game|
-      game if game.season == season
-    end
-    game_teams_by_season = []
-    games_by_season.each do |game|
-      # require 'pry'; binding.pry
-      GameTeam.gameteam.each do |game_team|
-        game_teams_by_season.push(game_team) if game.game_id == game_team.game_id
-      end
-    end
-    goals = game_teams_by_season.each_with_object(Hash.new(0)) { |game_team, hash| hash[game_team.team_id] += game_team.goals.to_i }
-    shots = game_teams_by_season.each_with_object(Hash.new(0)) { |game_team, hash| hash[game_team.team_id] += game_team.shots.to_i }   
-    accuracies = goals.merge(shots) { |team_id, goals_values, shots_values| goals_values.to_f / shots_values.to_f}
-    # require 'pry'; binding.pry
-    team_id_least_accurate = accuracies.key(accuracies.values.min) 
+    goals = goals_per_season_team(season)
+    shots = shots_per_season_team(season)
+    accuracy = accuracy_by_team(goals, shots)
+    team_id_least_accurate = accuracy.key(accuracy.values.min) 
     team_with_least_accuracy = @team_data.find do |team|
       team_id_least_accurate == team.team_id
     end
