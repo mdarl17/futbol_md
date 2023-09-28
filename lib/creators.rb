@@ -26,5 +26,4 @@ module Creators
   def self.from_csv(locations)
     StatTracker.new(locations)
   end
-
 end
