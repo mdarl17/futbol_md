@@ -1,16 +1,20 @@
 # require_relative './spec_helper'
+require_relative 'creators'
 require_relative 'game_stats'
+require_relative 'league_stats'
+require_relative 'season_stats'
 require_relative 'game'
-require_relative 'game_team'
 require_relative 'teams'
+require_relative 'game_team'
 
 
 class StatTracker
   attr_reader :locations, :team_data, :game_data, :game_teams_data
 
-# include GameStats
   include GameStats
-  # include GameStats
+  include LeagueStats
+  include SeasonStats
+  include Creators
 
   def initialize(locations)
     @game_data = create_games(locations[:games])
@@ -18,180 +22,31 @@ class StatTracker
     @team_data = create_teams(locations[:teams])
   end
 
-  # CREATOR METHODS
 
-  def create_games(path)
-    data = CSV.parse(File.read(path), headers: true, header_converters: :symbol)
-    data.map do |row|
-      Game.new(row)
-    end
-  end
+  # def create_games(path)
+  #   data = CSV.parse(File.read(path), headers: true, header_converters: :symbol)
+  #   data.map do |row|
+  #     Game.new(row)
+  #   end
+  # end
 
-  def create_game_teams(path)
-    data = CSV.parse(File.read(path), headers: true, header_converters: :symbol)
-    data.map do |row| 
-      GameTeam.new(row)
-    end
-  end
+  # def create_game_teams(path)
+  #   data = CSV.parse(File.read(path), headers: true, header_converters: :symbol)
+  #   data.map do |row| 
+  #     GameTeam.new(row)
+  #   end
+  # end
 
-  def create_teams(path)
-    data = CSV.parse(File.read(path), headers: true, header_converters: :symbol)
-    data.map do |row|
-      Team.new(row)
-    end
-  end
+  # def create_teams(path)
+  #   data = CSV.parse(File.read(path), headers: true, header_converters: :symbol)
+  #   data.map do |row|
+  #     Team.new(row)
+  #   end
+  # end
 
-  def self.from_csv(locations)
-    StatTracker.new(locations)
-  end
-
-  # GAME STATISTICS
-
-  # highest_total_score
-
-  # GameStats.highest_total_score
-  # GameStats.lowest_total_score
-  # GameStats.percentage_calculator
-  # GameStats.percentage_home_wins
-  
-
-  
-  
-  def count_of_teams
-    teams = Team.teams.group_by { |team| team.team_name}
-    teams.keys.compact.count
-  end
-
-  def best_offense
-    total_team_goals_hash = {}
-    team_goals("home").each do |team_id, home_goals|
-      total_team_goals_hash[team_id] = [
-        home_goals + team_goals("away")[team_id],
-        GameTeam.gameteam.find_all do |game|
-          game.team_id == team_id
-        end.count
-      ]
-    end
-
-    team_name_avg_goals = []
-    total_team_goals_hash.each do |team, gls_gms_arr|
-      team_name_avg_goals << [get_team_info(team)['team_name'], ((gls_gms_arr.first.to_f/gls_gms_arr.last.to_f)*100/100).round(3)]
-    end
-    team_name_avg_goals.max_by do |team_arr|
-      team_arr.last
-    end.first
-  end
-  
-  def worst_offense
-    total_team_goals_hash = {}
-    team_goals("home").each do |team_id, home_goals|
-      total_team_goals_hash[team_id] = [
-        home_goals + team_goals("away")[team_id],
-        @game_teams_data.find_all do |game|
-          game.team_id == team_id
-        end.count
-      ]
-    end 
-    team_name_avg_goals = []
-    total_team_goals_hash.each do |team, gls_gms_arr|
-      team_name_avg_goals << [get_team_info(team)['team_name'], ((gls_gms_arr.first.to_f/gls_gms_arr.last.to_f)*100/100).round(3)]
-    end
-    team_name_avg_goals.min_by do |team_arr|
-      team_arr.last
-    end.first
-  end
-  
-  def highest_scoring_visitor
-    avg_goals_away_team = average_goals_per_team("away")
-    highest_a_avg = average_goals_per_team("away").values.max
-    team_identifier = avg_goals_away_team.key(highest_a_avg)
-    team_highest_a_avg = Team.teams.find do |team|
-      team_identifier == team.team_id
-    end
-    team_highest_a_avg.team_name
-  end
-  
-  def highest_scoring_home_team
-    avg_goals_home_team = average_goals_per_team("home")
-    highest_h_avg = average_goals_per_team("home").values.max
-    team_identifier = avg_goals_home_team.key(highest_h_avg)
-    team_highest_h_avg = Team.teams.find do |team|
-      team_identifier == team.team_id
-    end
-    team_highest_h_avg.team_name
-  end
-
-  def lowest_scoring_visitor
-    avg_away_team = average_goals_per_team("away")
-    lowest_a_avg = average_goals_per_team("away").values.min
-    team_identifier = avg_away_team.key(lowest_a_avg)
-    team_lowest_a_avg = Team.teams.find do |team|
-      team_identifier == team.team_id
-    end
-    team_lowest_a_avg.team_name
-  end
-
-  def lowest_scoring_home_team
-    avg_goals_home = average_goals_per_team("home")
-    lowest_h_avg = average_goals_per_team("home").values.min
-    team_identifier = avg_goals_home.key(lowest_h_avg)
-    team_lowest_h_avg = Team.teams.find do |team|
-      team_identifier == team.team_id
-    end
-    team_lowest_h_avg.team_name
-  end
-
-  def winningest_coach(season)
-    season_game_id = find_game_with_season_id(season)
-    highest_percent = coach_win_loss(season_game_id).values.max
-    best = coach_win_loss(season_game_id).key(highest_percent) 
-  end
-
-  def worst_coach(season)
-    season_game_id = find_game_with_season_id(season)
-    lowest_percent = coach_win_loss(season_game_id).values.min
-    worst = coach_win_loss(season_game_id).key(lowest_percent) 
-  end
-  
-  def most_accurate_team(season)
-    goals = goals_per_season_team(season)
-    shots = shots_per_season_team(season)
-    accuracy = accuracy_by_team(goals, shots)
-    team_id_most_accurate = accuracy.key(accuracy.values.max) 
-    team_with_most_accuracy = @team_data.find do |team|
-      team_id_most_accurate == team.team_id
-    end
-    team_with_most_accuracy.team_name
-  end
-
-  def least_accurate_team(season)
-    goals = goals_per_season_team(season)
-    shots = shots_per_season_team(season)
-    accuracy = accuracy_by_team(goals, shots)
-    team_id_least_accurate = accuracy.key(accuracy.values.min) 
-    team_with_least_accuracy = @team_data.find do |team|
-      team_id_least_accurate == team.team_id
-    end
-    team_with_least_accuracy.team_name
-  end
-
-  def most_tackles(season)
-    tackles_by_team = team_tackles(season)
-    team_id_most_tackles = tackles_by_team.max_by {|team_id, tackles| tackles}
-    team_most_tackles = Team.teams.find do |team|
-      team_id_most_tackles.first == team.team_id
-    end
-    team_most_tackles.team_name
-  end  
-  
-  def fewest_tackles(season)
-    tackles_by_team = team_tackles(season)
-    team_id_least_tackles = tackles_by_team.min_by {|team_id, tackles| tackles}
-    team_least_tackles = Team.teams.find do |team|
-      team_id_least_tackles.first == team.team_id
-    end
-    team_least_tackles.team_name
-  end
+  # def self.from_csv(locations)
+  #   StatTracker.new(locations)
+  # end
 
   # Helper Methods
 

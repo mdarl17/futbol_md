@@ -1,5 +1,7 @@
 
 require_relative 'spec_helper'
+require_relative './lib/creators'
+require_relative './lib/stat_tracker'
 
 game_path = './data/games.csv'
 team_path = './data/teams.csv'
@@ -11,5 +13,5 @@ locations = {
   game_teams: game_teams_path
 }
 
-stat_tracker = StatTracker.from_csv(locations)
+stat_tracker = StatTracker.new(locations)
 require 'pry'; binding.pry
