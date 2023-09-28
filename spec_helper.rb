@@ -4,4 +4,3 @@ require './runner'
 require 'simplecov'
 require 'rspec'
 require './lib/game'
-

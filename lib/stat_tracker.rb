@@ -1,4 +1,3 @@
-# require_relative './spec_helper'
 require_relative 'creators'
 require_relative 'game_stats'
 require_relative 'league_stats'
