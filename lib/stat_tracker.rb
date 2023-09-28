@@ -20,7 +20,7 @@ class StatTracker
   include Creators
   include Helper
 
-
+  
   def initialize(locations)
     @game_data = create_games(locations[:games])
     @game_teams_data = create_game_teams(locations[:game_teams])
@@ -30,3 +30,4 @@ class StatTracker
   def self.from_csv(locations)
     StatTracker.new(locations)
   end
+end
