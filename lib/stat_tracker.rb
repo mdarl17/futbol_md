@@ -1,10 +1,16 @@
 # require_relative './spec_helper'
-require_relative './game'
-require_relative './game_team'
-require_relative './teams'
+require_relative 'game_stats'
+require_relative 'game'
+require_relative 'game_team'
+require_relative 'teams'
+
 
 class StatTracker
   attr_reader :locations, :team_data, :game_data, :game_teams_data
+
+# include GameStats
+  include GameStats
+  # include GameStats
 
   def initialize(locations)
     @game_data = create_games(locations[:games])
@@ -41,83 +47,15 @@ class StatTracker
 
   # GAME STATISTICS
 
-  def highest_total_score
-    most_goals_game = Game.games.reduce(0) do |goals, game|
-      game_goals = game.home_goals.to_i + game.away_goals.to_i
-      if game_goals > goals
-        goals = game_goals
-      end
-      goals
-    end
-    most_goals_game
-  end
+  # highest_total_score
 
-  def lowest_total_score
-    fewest_goals_game = Game.games.reduce(0) do |goals, game|
-      game_goals = game.home_goals.to_i + game.away_goals.to_i
-      if game_goals < goals
-        goals = game_goals
-      end
-      goals
-    end
-    fewest_goals_game
-  end
-  #hm
-  def percentage_calculator(portion, whole)
-    percentage = (portion/whole).round(2)
-  end
+  # GameStats.highest_total_score
+  # GameStats.lowest_total_score
+  # GameStats.percentage_calculator
+  # GameStats.percentage_home_wins
+  
 
-  def percentage_home_wins
-    home_wins = GameTeam.gameteam.count do |game|
-      game.hoa == "home" && game.result == "WIN"
-    end 
-    (home_wins.to_f / Game.games.count.to_f).round(2)
-  end
-
-  def percentage_visitor_wins
-    away_wins = GameTeam.gameteam.count do |game|
-      game.hoa == "away" && game.result == "WIN"
-    end 
-    (away_wins.to_f / Game.games.count.to_f).round(2)
-  end
-
-  def percentage_ties 
-    ties = Game.games.count do |game|
-      game.away_goals.to_f == game.home_goals.to_f
-    end.to_f
-    (ties/Game.games.count).round(2)
-  end
-
-  def count_of_games_by_season 
-    games_seasons = Hash.new(0)
-    Game.games.each do |row|
-      season = row.season
-      games_seasons[season] += 1
-    end 
-    games_seasons
-
-  end
-
-  def average_goals_per_game
-    total_goals = 0
-    total_games = []
-    GameTeam.gameteam.each do |row|
-      total_goals += row.goals.to_i
-      total_games << row.game_id
-    end
-    average = total_goals.to_f / total_games.uniq.count
-    average.round(2)
-  end
-
-  def average_goals_by_season
-    season_hash = Game.games.group_by{|game| game.season }
-    av_goals = {}
-    season_hash.each do |season,games|
-      total_goals = games.map {|game| game.home_goals.to_i + game.away_goals.to_i}
-      av_goals[season] = (total_goals.sum.to_f / games.length).round(2)
-    end
-    av_goals
-  end
+  
   
   def count_of_teams
     teams = Team.teams.group_by { |team| team.team_name}
@@ -127,13 +65,14 @@ class StatTracker
   def best_offense
     total_team_goals_hash = {}
     team_goals("home").each do |team_id, home_goals|
-    total_team_goals_hash[team_id] = [
-      home_goals + team_goals("away")[team_id],
-      GameTeam.gameteam.find_all do |game|
-        game.team_id == team_id
-      end.count
-    ]
-    end 
+      total_team_goals_hash[team_id] = [
+        home_goals + team_goals("away")[team_id],
+        GameTeam.gameteam.find_all do |game|
+          game.team_id == team_id
+        end.count
+      ]
+    end
+
     team_name_avg_goals = []
     total_team_goals_hash.each do |team, gls_gms_arr|
       team_name_avg_goals << [get_team_info(team)['team_name'], ((gls_gms_arr.first.to_f/gls_gms_arr.last.to_f)*100/100).round(3)]
@@ -255,6 +194,10 @@ class StatTracker
   end
 
   # Helper Methods
+
+  def percentage_calculator(portion=433.to_f, whole=744)
+    percentage = (portion/whole).round(2)
+  end
 
   def team_info
     teams = GameTeam.gameteam.group_by {|team| team.team_id}
