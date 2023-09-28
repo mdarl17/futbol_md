@@ -21,7 +21,7 @@ module GameStats
   end
 
   def percentage_home_wins
-    home_wins = GameTeam.gametqeam.count do |game|
+    home_wins = GameTeam.gameteam.count do |game|
       game.hoa == "home" && game.result == "WIN"
     end 
     (home_wins.to_f / Game.games.count.to_f).round(2)
